@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MHD Support Center</title>
+  <meta property="og:description" content="🔧 MHD Technical Support Center 📞" />
+  <meta property="og:image" content="MHD3.png"/>
+  <link rel="icon" type="image/png" href="MHD3.png" />
+  <style>
+    /* Maintain existing styling with minor adjustments */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                  url('https://wallpapercg.com/media/ts_orig/22899.webp') fixed;
+      background-size: cover;
+      background-position: center;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Keep existing nav styles */
+    .support-section {
+      background: rgba(30, 30, 30, 0.9);
+      padding: 2rem;
+      border-radius: 8px;
+      margin: 1rem auto;
+      border: 1px solid #404040;
+      max-width: 800px;
+    }
+    .faq-item {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: rgba(40, 40, 40, 0.9);
+      border-radius: 6px;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    input, textarea {
+      padding: 0.8rem;
+      background: rgba(50, 50, 50, 0.9);
+      border: 1px solid #505050;
+      color: #e0e0e0;
+      border-radius: 4px;
+    }
+    .submit-btn {
+      background: #404040;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .submit-btn:hover {
+      background: #505050;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-links">
+      <a data-target="home">HOME</a>
+      <a data-target="faq">FAQ</a>
+      <a data-target="contact">CONTACT</a>
+      <a data-target="status">SYSTEM STATUS</a>
+    </div>
+  </nav>
+
+  <!-- Content Sections -->
+  <section id="home" class="content-section active">
+    <div class="support-section">
+      <h1>WELCOME TO MHD SUPPORT</h1>
+      <p>24/7 technical support for all MHD products and services</p>
+      <div class="project-status">
+        <p>🚀 Current Support Response Time: Under 2 Hours</p>
+        <p>🛡️ System Uptime: 99.99%</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="content-section">
+    <div class="support-section">
+      <h1>FREQUENTLY ASKED QUESTIONS</h1>
+      <div class="faq-item">
+        <h3>How do I reset my password?</h3>
+        <p>Visit our password recovery page and follow the instructions...</p>
+      </div>
+      <div class="faq-item">
+        <h3>Where can I find documentation?</h3>
+        <p>All product documentation is available in our knowledge base...</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="content-section">
+    <div class="support-section">
+      <h1>CONTACT SUPPORT</h1>
+      <form class="contact-form">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea rows="5" placeholder="Describe your issue..." required></textarea>
+        <button type="submit" class="submit-btn">Submit Ticket</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="status" class="content-section">
+    <div class="support-section">
+      <h1>SYSTEM STATUS</h1>
+      <div class="status-item">
+        <h3>🟢 All Systems Operational</h3>
+        <p>Last updated: 5 minutes ago</p>
+      </div>
+      <div class="status-item">
+        <h4>Web Services</h4>
+        <p>Operational</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Need immediate assistance? Call +1 (800) MHD-HELP</p>
+    <p>Copyright © ${new Date().getFullYear()} MHD Support</p>
+  </footer>
+
+  <script>
+    // Maintain existing navigation logic
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = e.target.getAttribute('data-target');
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(target).classList.add('active');
+        history.pushState(null, null, `#${target}`);
+      });
+    });
+
+    // Form submission handling
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Ticket submitted successfully! We will respond shortly.');
+      e.target.reset();
+    });
+
+    // Copyright year update
+    document.querySelector('footer p:last-child').innerHTML = 
+      `Copyright © ${new Date().getFullYear()} MHD Support`;
+  </script>
+</body>
+</html>
