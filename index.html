@@ -8,7 +8,6 @@
   <meta property="og:image" content="MHD3.png"/>
   <link rel="icon" type="image/png" href="MHD3.png" />
   <style>
-    /* Maintain existing styling with minor adjustments */
     * {
       margin: 0;
       padding: 0;
@@ -25,7 +24,29 @@
       display: flex;
       flex-direction: column;
     }
-    /* Keep existing nav styles */
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem;
+      background: rgba(20, 20, 20, 0.9);
+    }
+    .nav-links a {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .nav-links a.active,
+    .nav-links a:hover {
+      background: rgba(80, 80, 80, 0.9);
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
     .support-section {
       background: rgba(30, 30, 30, 0.9);
       padding: 2rem;
@@ -64,7 +85,6 @@
     .submit-btn:hover {
       background: #505050;
     }
-    /* Add/modify footer styles */
     footer {
       margin-top: auto;
       display: flex;
@@ -82,10 +102,10 @@
 <body>
   <nav>
     <div class="nav-links">
-      <a data-target="home">HOME</a>
-      <a data-target="faq">FAQ</a>
-      <a data-target="contact">CONTACT</a>
-      <a data-target="status">SYSTEM STATUS</a>
+      <a href="#home" data-target="home" class="active">HOME</a>
+      <a href="#faq" data-target="faq">FAQ</a>
+      <a href="#contact" data-target="contact">CONTACT</a>
+      <a href="#status" data-target="status">SYSTEM STATUS</a>
     </div>
   </nav>
 
@@ -147,29 +167,59 @@
   </footer>
 
   <script>
-    // Maintain existing navigation logic
+    // Enhanced SPA navigation
+    function activateSection(target) {
+      // Update sections
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(target).classList.add('active');
+
+      // Update nav links
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.classList.remove('active');
+        if(link.getAttribute('data-target') === target) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    // Initial load
+    function handleInitialLoad() {
+      const target = window.location.hash.substring(1) || 'home';
+      activateSection(target);
+    }
+
+    // Navigation click handler
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const target = e.target.getAttribute('data-target');
-        document.querySelectorAll('.content-section').forEach(section => {
-          section.classList.remove('active');
-        });
-        document.getElementById(target).classList.add('active');
-        history.pushState(null, null, `#${target}`);
+        activateSection(target);
+        history.pushState({}, '', `#${target}`);
       });
     });
 
-    // Update copyright selector to target first paragraph
-    document.querySelector('footer p:first-child').innerHTML = 
-      `Copyright © ${new Date().getFullYear()} MHD Support`;
-    
+    // Handle browser navigation (back/forward)
+    window.addEventListener('popstate', () => {
+      const target = window.location.hash.substring(1) || 'home';
+      activateSection(target);
+    });
+
+    // Handle initial page load
+    window.addEventListener('load', handleInitialLoad);
+    document.addEventListener('DOMContentLoaded', handleInitialLoad);
+
     // Form submission handling
     document.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
       alert('Ticket submitted successfully! We will respond shortly.');
       e.target.reset();
     });
+
+    // Update copyright selector to target first paragraph
+    document.querySelector('footer p:first-child').innerHTML = 
+      `Copyright © ${new Date().getFullYear()} MHD Support`;
 
     // Copyright year update
     document.querySelector('footer p:last-child').innerHTML = 
