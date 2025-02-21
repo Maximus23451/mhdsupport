@@ -64,6 +64,19 @@
     .submit-btn:hover {
       background: #505050;
     }
+    /* Add/modify footer styles */
+    footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem;
+      background: rgba(20, 20, 20, 0.9);
+    }
+    
+    footer p {
+      margin: 0;
+      padding: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +160,10 @@
       });
     });
 
+    // Update copyright selector to target first paragraph
+    document.querySelector('footer p:first-child').innerHTML = 
+      `Copyright © ${new Date().getFullYear()} MHD Support`;
+    
     // Form submission handling
     document.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
