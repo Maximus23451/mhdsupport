@@ -4,9 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MHD Support Center</title>
-  <meta property="og:description" content="🔧 MHD Technical Support Center 📞" />
-  <meta property="og:image" content="MHD3.png"/>
-  <link rel="icon" type="image/png" href="MHD3.png" />
+  <meta property="og:description" content="🔧 MHD Technical Support Center 📞">
+  <meta property="og:image" content="MHD3.png">
+  <link rel="icon" type="image/png" href="MHD3.png">
+  <script src="https://www.google.com/recaptcha/api.js?render=YOUR_RECAPTCHA_SITE_KEY"></script>
   <style>
     * {
       margin: 0;
@@ -92,11 +93,29 @@
       padding: 1rem;
       background: rgba(20, 20, 20, 0.9);
     }
-    
     footer p {
       margin: 0;
       padding: 0.5rem;
     }
+    #form-status {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+      display: none;
+    }
+    #form-status.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      display: block;
+    }
+    #form-status.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+    .grecaptcha-badge { visibility: hidden; }
   </style>
 </head>
 <body>
@@ -138,11 +157,12 @@
   <section id="contact" class="content-section">
     <div class="support-section">
       <h1>CONTACT SUPPORT</h1>
-      <form class="contact-form">
-        <input type="text" placeholder="Your Name" required>
-        <input type="email" placeholder="Your Email" required>
-        <textarea rows="5" placeholder="Describe your issue..." required></textarea>
+      <form id="supportForm" class="contact-form">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" rows="5" placeholder="Describe your issue..." required></textarea>
         <button type="submit" class="submit-btn">Submit Ticket</button>
+        <div id="form-status"></div>
       </form>
     </div>
   </section>
@@ -162,20 +182,18 @@
   </section>
 
   <footer>
+    <p>Copyright © <span id="copyrightYear"></span> MHD Support</p>
     <p>Need immediate assistance? Call +1 (800) MHD-HELP</p>
-    <p>Copyright © ${new Date().getFullYear()} MHD Support</p>
   </footer>
 
   <script>
-    // Enhanced SPA navigation
+    // Navigation System
     function activateSection(target) {
-      // Update sections
       document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
       });
       document.getElementById(target).classList.add('active');
 
-      // Update nav links
       document.querySelectorAll('.nav-links a').forEach(link => {
         link.classList.remove('active');
         if(link.getAttribute('data-target') === target) {
@@ -184,13 +202,14 @@
       });
     }
 
-    // Initial load
+    // Initial Load
     function handleInitialLoad() {
       const target = window.location.hash.substring(1) || 'home';
       activateSection(target);
+      document.getElementById('copyrightYear').textContent = new Date().getFullYear();
     }
 
-    // Navigation click handler
+    // Event Listeners
     document.querySelectorAll('.nav-links a').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -200,30 +219,64 @@
       });
     });
 
-    // Handle browser navigation (back/forward)
     window.addEventListener('popstate', () => {
       const target = window.location.hash.substring(1) || 'home';
       activateSection(target);
     });
 
-    // Handle initial page load
-    window.addEventListener('load', handleInitialLoad);
-    document.addEventListener('DOMContentLoaded', handleInitialLoad);
+    // reCAPTCHA and Form Handling
+    function executeRecaptcha() {
+      return new Promise((resolve) => {
+        grecaptcha.ready(() => {
+          grecaptcha.execute('YOUR_RECAPTCHA_SITE_KEY', { action: 'submit' })
+            .then(token => resolve(token));
+        });
+      });
+    }
 
-    // Form submission handling
-    document.querySelector('form').addEventListener('submit', (e) => {
+    document.getElementById('supportForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      alert('Ticket submitted successfully! We will respond shortly.');
-      e.target.reset();
+      const form = e.target;
+      const status = document.getElementById('form-status');
+      status.className = '';
+      status.textContent = '';
+
+      try {
+        const token = await executeRecaptcha();
+        const response = await fetch('YOUR_CLOUDFLARE_WORKER_URL', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: form.name.value,
+            email: form.email.value,
+            message: form.message.value,
+            recaptchaToken: token
+          })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          status.className = 'success';
+          status.textContent = 'Message sent to support@vmhd.my.id and admin@vmhd.my.id!';
+          form.reset();
+        } else {
+          status.className = 'error';
+          status.textContent = data.error || 'Failed to send message';
+        }
+      } catch (error) {
+        status.className = 'error';
+        status.textContent = 'Network error. Please try again later.';
+      }
+      
+      setTimeout(() => {
+        status.className = '';
+        status.textContent = '';
+      }, 5000);
     });
 
-    // Update copyright selector to target first paragraph
-    document.querySelector('footer p:first-child').innerHTML = 
-      `Copyright © ${new Date().getFullYear()} MHD Support`;
-
-    // Copyright year update
-    document.querySelector('footer p:last-child').innerHTML = 
-      `Copyright © ${new Date().getFullYear()} MHD Support`;
+    // Initialization
+    window.addEventListener('load', handleInitialLoad);
+    document.addEventListener('DOMContentLoaded', handleInitialLoad);
   </script>
 </body>
 </html>
